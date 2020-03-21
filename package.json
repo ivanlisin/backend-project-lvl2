@@ -11,6 +11,9 @@
     "nodejs"
   ],
   "main": "dist/index.js",
+  "bin": {
+    "gendiff": "dist/bin/gendiff.js"
+  },
   "engines": {
     "node": ">=13"
   },
@@ -45,5 +48,8 @@
     "eslint-plugin-import": "^2.20.1",
     "eslint-plugin-jest": "^23.8.2",
     "jest": "^25.1.0"
+  },
+  "dependencies": {
+    "commander": "^5.0.0"
   }
 }
