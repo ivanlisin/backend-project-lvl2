@@ -12,7 +12,7 @@ const getObject = (pathToFile) => {
   if (extname === '.yaml' || extname === '.yml') {
     return parseYaml(pathToFile);
   }
-  return null;
+  throw new Error('object not created');
 };
 
 const getKeys = (obj1, obj2) => _.union(Object.keys(obj1), Object.keys(obj2));
@@ -44,13 +44,17 @@ const getReport = (diff) => {
 };
 
 const genDiff = (pathToFile1, pathToFile2) => {
-  const before = getObject(pathToFile1);
-  const after = getObject(pathToFile2);
+  let before;
+  let after;
+  try {
+    before = getObject(pathToFile1);
+    after = getObject(pathToFile2);
+  } catch (err) {
+    throw new Error('incorrect extname');
+  }
 
   const keys = getKeys(before, after);
-
   const diff = getDiff(before, after, keys);
-
   return getReport(diff);
 };
 
