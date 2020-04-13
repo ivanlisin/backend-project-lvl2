@@ -1,12 +1,7 @@
-import path from 'path';
-import fs from 'fs';
 import yaml from 'js-yaml';
 
-const getText = (pathToFile) => {
-  const absolutePath = path.resolve(pathToFile);
-  return fs.readFileSync(absolutePath, 'utf-8');
+export default {
+  '.json': JSON.parse,
+  '.yaml': yaml.safeLoad,
+  '.yml': yaml.safeLoad,
 };
-
-export const parseJson = (pathToJson) => JSON.parse(getText(pathToJson));
-
-export const parseYaml = (pathToYaml) => yaml.safeLoad(getText(pathToYaml));

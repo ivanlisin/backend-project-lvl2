@@ -1,18 +1,22 @@
 import _ from 'lodash';
 import path from 'path';
-import { parseJson, parseYaml } from './parsers';
+import fs from 'fs';
+import parsers from './parsers';
 
-const getObject = (pathToFile) => {
-  const basename = path.basename(pathToFile);
-  const extname = path.extname(basename);
+const getText = (pathToFile) => {
+  const absolutePath = path.resolve(pathToFile);
+  return fs.readFileSync(absolutePath);
+};
 
-  if (extname === '.json') {
-    return parseJson(pathToFile);
+const getExtname = (pathToFile) => path.extname(path.basename(pathToFile));
+
+const getObject = (text, extname) => {
+  if (!_.has(parsers, extname)) {
+    throw new Error(`${extname} not supported`);
   }
-  if (extname === '.yaml' || extname === '.yml') {
-    return parseYaml(pathToFile);
-  }
-  throw new Error('object not created');
+
+  const parse = parsers[extname];
+  return parse(text);
 };
 
 const getKeys = (obj1, obj2) => _.union(Object.keys(obj1), Object.keys(obj2));
@@ -44,15 +48,18 @@ const getReport = (diff) => {
 };
 
 const genDiff = (pathToFile1, pathToFile2) => {
-  let before;
-  let after;
+  let objects;
   try {
-    before = getObject(pathToFile1);
-    after = getObject(pathToFile2);
+    objects = [pathToFile1, pathToFile2].map((pathToFile) => {
+      const text = getText(pathToFile);
+      const extname = getExtname(pathToFile);
+      return getObject(text, extname);
+    });
   } catch (err) {
-    throw new Error('incorrect extname');
+    throw new Error(err);
   }
 
+  const [before, after] = objects;
   const keys = getKeys(before, after);
   const diff = getDiff(before, after, keys);
   return getReport(diff);

@@ -1,7 +1,7 @@
 import genDiff from '../src';
 
-const relatPathToDir = '__fixtures__';
-const absolPathToDir = `${__dirname}/../${relatPathToDir}`;
+const dir = '__fixtures__';
+const pathToDir = `${__dirname}/../${dir}`;
 
 const diff = `{
     host: hexlet.io
@@ -13,14 +13,11 @@ const diff = `{
 }`;
 
 test('gendiff', () => {
-  expect(genDiff(`${relatPathToDir}/before.json`, `${relatPathToDir}/after.json`)).toEqual(diff);
-  expect(genDiff(`${relatPathToDir}/before.yaml`, `${relatPathToDir}/after.yaml`)).toEqual(diff);
-  expect(genDiff(`${relatPathToDir}/before.yml`, `${relatPathToDir}/after.yml`)).toEqual(diff);
+  expect(genDiff(`${pathToDir}/before.json`, `${pathToDir}/after.json`)).toEqual(diff);
+  expect(genDiff(`${pathToDir}/before.yaml`, `${pathToDir}/after.yaml`)).toEqual(diff);
 
-  expect(genDiff(`${absolPathToDir}/before.yaml`, `${absolPathToDir}/after.yaml`)).toEqual(diff);
-  expect(genDiff(`${absolPathToDir}/before.json`, `${absolPathToDir}/after.json`)).toEqual(diff);
-  expect(genDiff(`${absolPathToDir}/before.yml`, `${absolPathToDir}/after.yml`)).toEqual(diff);
+  expect(genDiff(`${dir}/before.yml`, `${dir}/after.yml`)).toEqual(diff);
 
-  expect(() => genDiff(`${relatPathToDir}/before.txt`, `${relatPathToDir}/after.txt`))
-    .toThrowError(new Error('incorrect extname'));
+  expect(() => genDiff(`${pathToDir}/not-exist-1.json`, `${pathToDir}/not-exist-2.json`)).toThrow();
+  expect(() => genDiff(`${pathToDir}/before.txt`, `${pathToDir}/after.txt`)).toThrowError('.txt not supported');
 });

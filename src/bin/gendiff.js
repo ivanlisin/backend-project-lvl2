@@ -9,5 +9,11 @@ program
   .description(description)
   .version(version)
   .option('-f, --format [type]', 'output format')
-  .action((path1, path2) => console.log(genDiff(path1, path2)))
+  .action((path1, path2) => {
+    try {
+      console.log(genDiff(path1, path2));
+    } catch (err) {
+      console.log(err.message);
+    }
+  })
   .parse(process.argv);
