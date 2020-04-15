@@ -5,7 +5,7 @@ import parsers from './parsers';
 
 const getText = (pathToFile) => {
   const absolutePath = path.resolve(pathToFile);
-  return fs.readFileSync(absolutePath);
+  return fs.readFileSync(absolutePath, 'utf-8');
 };
 
 const getExtname = (pathToFile) => path.extname(path.basename(pathToFile));
