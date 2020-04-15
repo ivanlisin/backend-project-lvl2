@@ -48,18 +48,11 @@ const getReport = (diff) => {
 };
 
 const genDiff = (pathToFile1, pathToFile2) => {
-  let objects;
-  try {
-    objects = [pathToFile1, pathToFile2].map((pathToFile) => {
-      const text = getText(pathToFile);
-      const extname = getExtname(pathToFile);
-      return getObject(text, extname);
-    });
-  } catch (err) {
-    throw new Error(err);
-  }
-
-  const [before, after] = objects;
+  const [before, after] = [pathToFile1, pathToFile2].map((pathToFile) => {
+    const text = getText(pathToFile);
+    const extname = getExtname(pathToFile);
+    return getObject(text, extname);
+  });
   const keys = getKeys(before, after);
   const diff = getDiff(before, after, keys);
   return getReport(diff);
