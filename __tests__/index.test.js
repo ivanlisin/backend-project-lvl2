@@ -17,6 +17,7 @@ test('gendiff', () => {
   expect(genDiff(`${pathToDir}/before.yaml`, `${pathToDir}/after.yaml`)).toEqual(diff);
 
   expect(genDiff(`${dir}/before.yml`, `${dir}/after.yml`)).toEqual(diff);
+  expect(genDiff(`${dir}/before.ini`, `${dir}/after.ini`)).toEqual(diff);
 
   expect(() => genDiff(`${pathToDir}/not-exist-1.json`, `${pathToDir}/not-exist-2.json`)).toThrow();
   expect(() => genDiff(`${pathToDir}/before.txt`, `${pathToDir}/after.txt`)).toThrowError('.txt not supported');
