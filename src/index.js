@@ -1,61 +1,44 @@
 import _ from 'lodash';
 import path from 'path';
 import fs from 'fs';
-import parsers from './parsers';
+import parse from './parsers';
+import format from './formatters';
 
-const getText = (pathToFile) => {
-  const absolutePath = path.resolve(pathToFile);
-  return fs.readFileSync(absolutePath, 'utf-8');
-};
+// eslint-disable-next-line no-shadow
+const compare = (obj1, obj2, path = []) => {
+  const keys = _.union(Object.keys(obj1), Object.keys(obj2));
+  return keys.reduce((acc, key) => {
+    const value1 = obj1[key];
+    const value2 = obj2[key];
 
-const getExtname = (pathToFile) => path.extname(path.basename(pathToFile));
-
-const getObject = (text, extname) => {
-  if (!_.has(parsers, extname)) {
-    throw new Error(`${extname} not supported`);
-  }
-
-  const parse = parsers[extname];
-  return parse(text);
-};
-
-const getKeys = (obj1, obj2) => _.union(Object.keys(obj1), Object.keys(obj2));
-
-const getDiff = (before, after, keys) => keys
-  .reduce((acc, key) => {
-    const isUnchanged = before[key] === after[key];
-    if (isUnchanged) {
-      const value = after[key];
-      acc.push(`  ${key}: ${value}`);
+    if (_.isObject(value1) && _.isObject(value2)) {
+      const child1 = value1;
+      const child2 = value2;
+      acc[key] = compare(child1, child2, [...path, key]);
       return acc;
     }
 
-    if (_.has(before, key)) {
-      const value = before[key];
-      acc.push(`- ${key}: ${value}`);
+    if (value1 === value2) {
+      acc[key] = value1;
+      return acc;
     }
-    if (_.has(after, key)) {
-      const value = after[key];
-      acc.push(`+ ${key}: ${value}`);
+
+    if (_.has(obj1, key)) {
+      acc[`- ${key}`] = value1;
+    }
+    if (_.has(obj2, key)) {
+      acc[`+ ${key}`] = value2;
     }
     return acc;
-  }, []);
-
-const getReport = (diff) => {
-  const lines = diff.map((item) => `  ${item}`);
-  const text = lines.join('\n');
-  return `{\n${text}\n}`;
+  }, {});
 };
 
-const genDiff = (pathToFile1, pathToFile2) => {
+export default (pathToFile1, pathToFile2, outputFormat) => {
   const [before, after] = [pathToFile1, pathToFile2].map((pathToFile) => {
-    const text = getText(pathToFile);
-    const extname = getExtname(pathToFile);
-    return getObject(text, extname);
+    const text = fs.readFileSync(path.resolve(pathToFile), 'utf-8');
+    const extname = path.extname(path.basename(pathToFile));
+    return parse(text, extname);
   });
-  const keys = getKeys(before, after);
-  const diff = getDiff(before, after, keys);
-  return getReport(diff);
+  const diff = compare(before, after);
+  return format(diff, outputFormat);
 };
-
-export default genDiff;

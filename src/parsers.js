@@ -1,9 +1,19 @@
 import yaml from 'js-yaml';
 import ini from 'ini';
+import _ from 'lodash';
 
-export default {
+const parsers = {
   '.json': JSON.parse,
   '.yaml': yaml.safeLoad,
   '.yml': yaml.safeLoad,
   '.ini': ini.parse,
+};
+
+export default (text, extname) => {
+  if (!_.has(parsers, extname)) {
+    throw new Error(`${extname} not supported`);
+  }
+
+  const parse = parsers[extname];
+  return parse(text);
 };
