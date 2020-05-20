@@ -2,10 +2,9 @@ import _ from 'lodash';
 import path from 'path';
 import fs from 'fs';
 import parse from './parsers';
-import format from './formatters';
+import formalize from './formatters';
 
-// eslint-disable-next-line no-shadow
-const compare = (obj1, obj2, path = []) => {
+const compare = (obj1, obj2, ancestry = []) => {
   const keys = _.union(Object.keys(obj1), Object.keys(obj2));
   return keys.reduce((acc, key) => {
     const value1 = obj1[key];
@@ -14,7 +13,7 @@ const compare = (obj1, obj2, path = []) => {
     if (_.isObject(value1) && _.isObject(value2)) {
       const child1 = value1;
       const child2 = value2;
-      acc[key] = compare(child1, child2, [...path, key]);
+      acc[key] = compare(child1, child2, [...ancestry, key]);
       return acc;
     }
 
@@ -40,5 +39,5 @@ export default (pathToFile1, pathToFile2, outputFormat) => {
     return parse(text, extname);
   });
   const diff = compare(before, after);
-  return format(diff, outputFormat);
+  return formalize(diff, outputFormat);
 };

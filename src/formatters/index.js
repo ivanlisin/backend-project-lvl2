@@ -1,15 +1,17 @@
 import _ from 'lodash';
 import toStylish from './stylish';
+import toPlain from './plain';
 
 const formatters = {
   stylish: toStylish,
+  plain: toPlain,
 };
 
-export default (diff, type) => {
-  if (!_.has(formatters, type)) {
-    throw new Error(`${type} not supported`);
+export default (diff, format) => {
+  if (!_.has(formatters, format)) {
+    throw new Error(`${format} not supported`);
   }
 
-  const format = formatters[type];
-  return format(diff);
+  const formalize = formatters[format];
+  return formalize(diff);
 };

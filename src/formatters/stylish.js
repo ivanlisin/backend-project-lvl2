@@ -19,6 +19,7 @@ const convert = (obj, depth = 0) => {
       acc.push(`${align(key, depth)}: {`, ...lines, `${align('}', depth)}`);
       return acc;
     }
+
     const pair = `${key}: ${value}`;
     const line = `${align(pair, depth)}`;
     acc.push(line);
