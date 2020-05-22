@@ -5,6 +5,7 @@ const pathToDir = `${__dirname}/../${dir}`;
 
 const format1 = 'stylish';
 const format2 = 'plain';
+const format3 = 'json';
 const notSupportedFormat = 'some format';
 
 const diff1 = `{
@@ -51,13 +52,49 @@ Property group1.baz was changed from bas to undefined
 Property group1.nest was changed from [complex value] to str
 Property group2 was deleted
 Property group3 was added with value: [complex value]`;
+let diff3;
+
+beforeAll(() => {
+  diff3 = JSON.stringify({
+    common: {
+      setting1: 'Value 1',
+      '- setting2': 200,
+      '- setting3': true,
+      '+ setting3': {
+        key: 'value',
+      },
+      setting6: {
+        key: 'value',
+        '+ ops': 'vops',
+      },
+      '+ follow': false,
+      '+ setting4': 'blah blah',
+      '+ setting5': {
+        key5: 'value5',
+      },
+    },
+    group1: {
+      '- baz': 'bas',
+      '+ baz': 'bars',
+      foo: 'bar',
+      '- nest': {
+        key: 'value',
+      },
+      '+ nest': 'str',
+    },
+    '- group2': {
+      abc: 12345,
+    },
+    '+ group3': {
+      fee: 100500,
+    },
+  });
+});
 
 test('gendiff', () => {
   expect(genDiff(`${pathToDir}/before.json`, `${pathToDir}/after.json`, format1)).toEqual(diff1);
-  expect(genDiff(`${pathToDir}/before.yaml`, `${pathToDir}/after.yaml`, format1)).toEqual(diff1);
-
   expect(genDiff(`${dir}/before.yml`, `${dir}/after.yml`, format2)).toEqual(diff2);
-  expect(genDiff(`${dir}/before.ini`, `${dir}/after.ini`, format2)).toEqual(diff2);
+  expect(genDiff(`${dir}/before.ini`, `${dir}/after.ini`, format3)).toEqual(diff3);
 
   expect(() => genDiff(`${pathToDir}/not-exist-1.json`, `${pathToDir}/not-exist-2.json`, format1)).toThrow();
   expect(() => genDiff(`${pathToDir}/before.txt`, `${pathToDir}/after.txt`, format1)).toThrowError('.txt not supported');
