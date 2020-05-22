@@ -5,6 +5,7 @@ import toPlain from './plain';
 const formatters = {
   stylish: toStylish,
   plain: toPlain,
+  json: JSON.stringify,
 };
 
 export default (diff, format) => {
