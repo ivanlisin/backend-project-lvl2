@@ -1,6 +1,6 @@
 {
   "name": "backend-project-lvl2-ifoxman",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Compares two configuration files and shows a difference.",
   "keywords": [
     "backend",
