@@ -1,11 +1,10 @@
 import _ from 'lodash';
-import { makeRenderFn } from '../diff';
-import convertTreeToStylish from './stylish';
-import convertTreeToPlain from './plain';
+import convertDiffToStylish from './stylish';
+import convertDiffToPlain from './plain';
 
 const formatters = {
-  stylish: makeRenderFn(convertTreeToStylish, (texts) => ['{', texts.join('\n'), '}'].join('\n')),
-  plain: makeRenderFn(convertTreeToPlain, (texts) => texts.join('\n')),
+  stylish: convertDiffToStylish,
+  plain: convertDiffToPlain,
   json: JSON.stringify,
 };
 

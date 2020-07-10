@@ -1,43 +1,55 @@
 import path from 'path';
+import fs from 'fs';
 import genDiff from '../src';
-import outputStylish from '../__fixtures__/output-stylish';
-import outputPlain from '../__fixtures__/output-plain';
-import outputJson from '../__fixtures__/output-json';
+import diff from '../__fixtures__/diff';
+
+const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', filename);
+const readFile = (filename) => fs.readFileSync(getFixturePath(filename), 'utf-8');
+
+let outputStylish;
+let outputPlain;
+let outputJson;
+
+beforeAll(() => {
+  outputStylish = readFile('stylish.txt');
+  outputPlain = readFile('plain.txt');
+  outputJson = JSON.stringify(diff);
+});
 
 test('gendiff', () => {
   expect(genDiff(
-    path.join(__dirname, '..', '__fixtures__', 'before.json'),
-    path.join(__dirname, '..', '__fixtures__', 'after.json'),
+    getFixturePath('before.json'),
+    getFixturePath('after.json'),
     'stylish',
   )).toEqual(outputStylish);
 
   expect(genDiff(
-    path.join('__fixtures__', 'before.yml'),
-    path.join('__fixtures__', 'after.yml'),
+    getFixturePath('before.yml'),
+    getFixturePath('after.yml'),
     'plain',
   )).toEqual(outputPlain);
 
   expect(genDiff(
-    path.join('__fixtures__', 'before.ini'),
-    path.join('__fixtures__', 'after.ini'),
+    getFixturePath('before.ini'),
+    getFixturePath('after.ini'),
     'json',
   )).toEqual(outputJson);
 
   expect(() => genDiff(
-    path.join('__fixtures__', 'not-exist-1.json'),
-    path.join('__fixtures__', 'not-exist-2.json'),
+    getFixturePath('not-exist-1.json'),
+    getFixturePath('not-exist-2.json'),
     'stylish',
   )).toThrow();
 
   expect(() => genDiff(
-    path.join('__fixtures__', 'before.txt'),
-    path.join('__fixtures__', 'after.txt'),
+    getFixturePath('before.txt'),
+    getFixturePath('after.txt'),
     'stylish',
   )).toThrowError('extension txt not supported');
 
   expect(() => genDiff(
-    path.join('__fixtures__', 'before.json'),
-    path.join('__fixtures__', 'after.json'),
+    getFixturePath('before.json'),
+    getFixturePath('after.json'),
     'notSupportedFormat',
   )).toThrowError('format notSupportedFormat not supported');
 });
