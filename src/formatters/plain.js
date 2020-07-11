@@ -3,6 +3,7 @@ import _ from 'lodash';
 const renderValue = (value) => (_.isObject(value) ? '[complex value]' : value);
 
 const convertTreeToPlain = (tree, ancestry) => {
+  // eslint-disable-next-line object-curly-newline
   const { key, type, value, children } = tree;
   if (type === 'nested') {
     return children.map((child) => convertTreeToPlain(child, [...ancestry, key]));

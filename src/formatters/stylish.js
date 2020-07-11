@@ -6,6 +6,7 @@ const makeIndent = (depth) => {
 };
 
 const renderObject = (object, depth) => {
+  // eslint-disable-next-line no-shadow
   const iter = (obj, depth) => {
     const keys = Object.keys(obj);
     return keys.flatMap((key) => {
@@ -30,6 +31,7 @@ const renderValue = (value, depth) => (_.isObject(value) ? renderObject(value, d
 
 const convertTreeToStylish = (tree, depth) => {
   const indent = makeIndent(depth);
+  // eslint-disable-next-line object-curly-newline
   const { key, type, value, children } = tree;
   if (type === 'nested') {
     const result = children.map((child) => convertTreeToStylish(child, depth + 1));
