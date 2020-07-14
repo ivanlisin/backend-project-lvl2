@@ -6,7 +6,6 @@ const makeIndent = (depth) => {
 };
 
 const renderObject = (object, depth) => {
-  // eslint-disable-next-line no-shadow
   const iter = (obj, depth) => {
     const keys = Object.keys(obj);
     return keys.flatMap((key) => {
@@ -29,28 +28,28 @@ const renderObject = (object, depth) => {
 
 const renderValue = (value, depth) => (_.isObject(value) ? renderObject(value, depth) : value);
 
-const convertTreeToStylish = (tree, depth) => {
+const convertTreeToStylish = (node, depth) => {
   const indent = makeIndent(depth);
-  // eslint-disable-next-line object-curly-newline
-  const { key, type, value, children } = tree;
-  if (type === 'nested') {
-    const result = children.map((child) => convertTreeToStylish(child, depth + 1));
-    return [`${indent}  ${key}: {`, ...result, `${indent}  }`].join('\n');
-  }
-  switch (type) {
+  switch (node.type) {
+    case 'nested':
+      return [
+        `${indent}  ${node.key}: {`,
+        ...node.children.map((child) => convertTreeToStylish(child, depth + 1)),
+        `${indent}  }`,
+      ].join('\n');
     case 'unchanged':
-      return `${indent}  ${key}: ${renderValue(value, depth)}`;
+      return `${indent}  ${node.key}: ${renderValue(node.value, depth)}`;
     case 'removed':
-      return `${indent}- ${key}: ${renderValue(value, depth)}`;
+      return `${indent}- ${node.key}: ${renderValue(node.value, depth)}`;
     case 'added':
-      return `${indent}+ ${key}: ${renderValue(value, depth)}`;
+      return `${indent}+ ${node.key}: ${renderValue(node.value, depth)}`;
     case 'changed':
       return [
-        `${indent}- ${key}: ${renderValue(value.before, depth)}`,
-        `${indent}+ ${key}: ${renderValue(value.after, depth)}`,
+        `${indent}- ${node.key}: ${renderValue(node.update.from, depth)}`,
+        `${indent}+ ${node.key}: ${renderValue(node.update.to, depth)}`,
       ].join('\n');
     default:
-      throw new Error(`Unknown type state: '${type}'!`);
+      throw new Error(`Unknown type state: '${node.type}'!`);
   }
 };
 

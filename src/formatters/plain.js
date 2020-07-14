@@ -2,24 +2,21 @@ import _ from 'lodash';
 
 const renderValue = (value) => (_.isObject(value) ? '[complex value]' : value);
 
-const convertTreeToPlain = (tree, ancestry) => {
-  // eslint-disable-next-line object-curly-newline
-  const { key, type, value, children } = tree;
-  if (type === 'nested') {
-    return children.map((child) => convertTreeToPlain(child, [...ancestry, key]));
-  }
-  const property = [...ancestry, key].join('.');
-  switch (type) {
-    case 'unchanged':
-      return [];
+const convertTreeToPlain = (node, ancestry) => {
+  const property = [...ancestry, node.key].join('.');
+  switch (node.type) {
+    case 'added':
+      return `Property ${property} was added with value: ${renderValue(node.value)}`;
     case 'removed':
       return `Property ${property} was removed`;
-    case 'added':
-      return `Property ${property} was added with value: ${renderValue(value)}`;
+    case 'nested':
+      return node.children.map((child) => convertTreeToPlain(child, [...ancestry, node.key]));
+    case 'unchanged':
+      return [];
     case 'changed':
-      return `Property ${property} was updated. From ${renderValue(value.before)} to ${renderValue(value.after)}`;
+      return `Property ${property} was updated. From ${renderValue(node.update.from)} to ${renderValue(node.update.to)}`;
     default:
-      throw new Error(`Unknown type state: '${type}'!`);
+      throw new Error(`Unknown type state: '${node.type}'!`);
   }
 };
 

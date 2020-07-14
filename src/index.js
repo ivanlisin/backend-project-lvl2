@@ -16,6 +16,13 @@ const compareObjects = (object1, object2) => {
     const value1 = object1[key];
     const value2 = object2[key];
 
+    if (!_.has(object1, key)) {
+      return { key, type: 'added', value: value2 };
+    }
+    if (!_.has(object2, key)) {
+      return { key, type: 'removed', value: value1 };
+    }
+
     const hasChildren = _.isObject(value1) && _.isObject(value2);
     if (hasChildren) {
       const children = compareObjects(value1, value2);
@@ -25,13 +32,7 @@ const compareObjects = (object1, object2) => {
     if (value1 === value2) {
       return { key, type: 'unchanged', value: value1 };
     }
-    if (!_.has(object1, key)) {
-      return { key, type: 'added', value: value2 };
-    }
-    if (!_.has(object2, key)) {
-      return { key, type: 'removed', value: value1 };
-    }
-    return { key, type: 'changed', value: { before: value1, after: value2 } };
+    return { key, type: 'changed', update: { from: value1, to: value2 } };
   });
 };
 
