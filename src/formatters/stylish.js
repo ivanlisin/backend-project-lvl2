@@ -45,8 +45,8 @@ const convertTreeToStylish = (node, depth) => {
       return `${indent}+ ${node.key}: ${renderValue(node.value, depth)}`;
     case 'changed':
       return [
-        `${indent}- ${node.key}: ${renderValue(node.update.from, depth)}`,
-        `${indent}+ ${node.key}: ${renderValue(node.update.to, depth)}`,
+        `${indent}- ${node.key}: ${renderValue(node.valueBefore, depth)}`,
+        `${indent}+ ${node.key}: ${renderValue(node.valueAfter, depth)}`,
       ].join('\n');
     default:
       throw new Error(`Unknown type state: '${node.type}'!`);

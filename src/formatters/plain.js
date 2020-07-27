@@ -14,7 +14,7 @@ const convertTreeToPlain = (node, ancestry) => {
     case 'unchanged':
       return [];
     case 'changed':
-      return `Property ${property} was updated. From ${renderValue(node.update.from)} to ${renderValue(node.update.to)}`;
+      return `Property ${property} was updated. From ${renderValue(node.valueBefore)} to ${renderValue(node.valueAfter)}`;
     default:
       throw new Error(`Unknown type state: '${node.type}'!`);
   }

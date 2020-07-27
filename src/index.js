@@ -32,7 +32,12 @@ const compareObjects = (object1, object2) => {
     if (value1 === value2) {
       return { key, type: 'unchanged', value: value1 };
     }
-    return { key, type: 'changed', update: { from: value1, to: value2 } };
+    return {
+      key,
+      type: 'changed',
+      valueBefore: value1,
+      valueAfter: value2,
+    };
   });
 };
 
