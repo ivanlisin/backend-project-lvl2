@@ -9,7 +9,7 @@ import {
 
 const renderValue = (value) => (_.isObject(value) ? '[complex value]' : value);
 
-const renderLikePlain = (diffTree, ancestry = []) => diffTree
+const renderPlain = (diffTree, ancestry = []) => diffTree
   .map((diff) => {
     const key = getKey(diff);
     const property = [...ancestry, getKey(diff)].join('.');
@@ -19,7 +19,7 @@ const renderLikePlain = (diffTree, ancestry = []) => diffTree
       case 'added':
         return `Property ${property} was added with value: ${getValueAfter(diff, renderValue)}`;
       case 'nested':
-        return renderLikePlain(getChildren(diff), [...ancestry, key]);
+        return renderPlain(getChildren(diff), [...ancestry, key]);
       case 'unchanged':
         return [];
       case 'changed':
@@ -31,4 +31,4 @@ const renderLikePlain = (diffTree, ancestry = []) => diffTree
   .flat(Infinity)
   .join('\n');
 
-export default renderLikePlain;
+export default renderPlain;

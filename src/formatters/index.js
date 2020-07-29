@@ -1,10 +1,10 @@
 import _ from 'lodash';
-import renderLikeStylish from './stylish';
-import renderLikePlain from './plain';
+import renderStylish from './stylish';
+import renderPlain from './plain';
 
 const formatters = {
-  stylish: renderLikeStylish,
-  plain: renderLikePlain,
+  stylish: renderStylish,
+  plain: renderPlain,
   json: JSON.stringify,
 };
 

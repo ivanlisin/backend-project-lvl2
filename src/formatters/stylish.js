@@ -61,6 +61,6 @@ const renderDiffTree = (diffTree, depth = 0) => diffTree
   })
   .join('\n');
 
-const renderLikeStylish = (diffTree) => ['{', renderDiffTree(diffTree), '}'].join('\n');
+const renderStylish = (diffTree) => ['{', renderDiffTree(diffTree), '}'].join('\n');
 
-export default renderLikeStylish;
+export default renderStylish;
