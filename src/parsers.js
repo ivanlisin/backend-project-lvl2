@@ -9,11 +9,12 @@ const parsers = {
   ini: ini.parse,
 };
 
-export default (text, extname) => {
+const parse = (text, extname) => {
   if (!_.has(parsers, extname)) {
     throw new Error(`extension ${extname} not supported`);
   }
-
-  const parse = parsers[extname];
-  return parse(text);
+  const parseSelectedExtname = parsers[extname];
+  return parseSelectedExtname(text);
 };
+
+export default parse;

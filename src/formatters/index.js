@@ -12,9 +12,8 @@ const render = (diffTree, format) => {
   if (!_.has(formatters, format)) {
     throw new Error(`format ${format} not supported`);
   }
-
-  const renderLikeFormat = formatters[format];
-  return renderLikeFormat(diffTree);
+  const renderSelectedFormat = formatters[format];
+  return renderSelectedFormat(diffTree);
 };
 
 export default render;
