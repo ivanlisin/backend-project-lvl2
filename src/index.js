@@ -2,7 +2,6 @@ import _ from 'lodash';
 import path from 'path';
 import fs from 'fs';
 import parse from './parsers';
-import { makeDiff } from './diff';
 import render from './formatters';
 
 const makeObject = (filepath) => {
@@ -14,14 +13,28 @@ const makeObject = (filepath) => {
 const compareObjects = (object1, object2) => {
   const keys = _.union(Object.keys(object1), Object.keys(object2));
   return keys.map((key) => {
-    const value1 = object1[key];
-    const value2 = object2[key];
-    const hasChildren = _.isObject(value1) && _.isObject(value2);
-    if (hasChildren) {
-      const children = compareObjects(value1, value2);
-      return makeDiff(key, object1, object2, children);
+    const valueBefore = object1[key];
+    const valueAfter = object2[key];
+    const isRemoved = !_.has(object2, key);
+    if (isRemoved) {
+      return { key, type: 'removed', valueBefore };
     }
-    return makeDiff(key, object1, object2);
+    const isAdded = !_.has(object1, key);
+    if (isAdded) {
+      return { key, type: 'added', valueAfter };
+    }
+    const hasChildren = _.isObject(valueBefore) && _.isObject(valueAfter);
+    if (hasChildren) {
+      const children = compareObjects(valueBefore, valueAfter);
+      return { key, type: 'nested', children };
+    }
+    const isUnchanged = valueBefore === valueAfter;
+    return {
+      key,
+      type: isUnchanged ? 'unchanged' : 'changed',
+      valueBefore,
+      valueAfter,
+    };
   });
 };
 

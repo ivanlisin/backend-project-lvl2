@@ -1,11 +1,4 @@
 import _ from 'lodash';
-import {
-  getType,
-  getKey,
-  getValueBefore,
-  getValueAfter,
-  getChildren,
-} from '../diff';
 
 const getIndent = (depth) => {
   const indentStep = ' '.repeat(4);
@@ -35,28 +28,27 @@ const renderValue = (value, depth) => (_.isObject(value) ? renderObject(value, d
 
 const renderDiffTree = (diffTree, depth = 0) => diffTree
   .map((diff) => {
-    const key = getKey(diff);
     const indent = getIndent(depth);
-    switch (getType(diff)) {
+    switch (diff.type) {
       case 'removed':
-        return `${indent}- ${key}: ${renderValue(getValueBefore(diff), depth)}`;
+        return `${indent}- ${diff.key}: ${renderValue(diff.valueBefore, depth)}`;
       case 'added':
-        return `${indent}+ ${key}: ${renderValue(getValueAfter(diff), depth)}`;
+        return `${indent}+ ${diff.key}: ${renderValue(diff.valueAfter, depth)}`;
       case 'nested':
         return [
-          `${indent}  ${key}: {`,
-          renderDiffTree(getChildren(diff), depth + 1),
+          `${indent}  ${diff.key}: {`,
+          renderDiffTree(diff.children, depth + 1),
           `${indent}  }`,
         ].join('\n');
       case 'unchanged':
-        return `${indent}  ${key}: ${renderValue(getValueAfter(diff), depth)}`;
+        return `${indent}  ${diff.key}: ${renderValue(diff.valueAfter, depth)}`;
       case 'changed':
         return [
-          `${indent}- ${key}: ${renderValue(getValueBefore(diff), depth)}`,
-          `${indent}+ ${key}: ${renderValue(getValueAfter(diff), depth)}`,
+          `${indent}- ${diff.key}: ${renderValue(diff.valueBefore, depth)}`,
+          `${indent}+ ${diff.key}: ${renderValue(diff.valueAfter, depth)}`,
         ].join('\n');
       default:
-        throw new Error(`Unknown type state: '${getType(diff)}'!`);
+        throw new Error(`Unknown type state: '${diff.type}'!`);
     }
   })
   .join('\n');
