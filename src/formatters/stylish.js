@@ -26,8 +26,8 @@ const renderObject = (object, depth) => {
 
 const renderValue = (value, depth) => (_.isObject(value) ? renderObject(value, depth) : value);
 
-const renderDiffTree = (diffTree, depth = 0) => diffTree
-  .map((diff) => {
+const renderDiffTree = (diffTree) => {
+  const iter = (innerDiffTree, depth) => innerDiffTree.map((diff) => {
     const indent = getIndent(depth);
     switch (diff.type) {
       case 'removed':
@@ -37,7 +37,7 @@ const renderDiffTree = (diffTree, depth = 0) => diffTree
       case 'nested':
         return [
           `${indent}  ${diff.key}: {`,
-          renderDiffTree(diff.children, depth + 1),
+          iter(diff.children, depth + 1),
           `${indent}  }`,
         ].join('\n');
       case 'unchanged':
@@ -50,8 +50,9 @@ const renderDiffTree = (diffTree, depth = 0) => diffTree
       default:
         throw new Error(`Unknown type state: '${diff.type}'!`);
     }
-  })
-  .join('\n');
+  }).join('\n');
+  return iter(diffTree, 0);
+};
 
 const renderStylish = (diffTree) => ['{', renderDiffTree(diffTree), '}'].join('\n');
 

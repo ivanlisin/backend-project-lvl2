@@ -2,8 +2,8 @@ import _ from 'lodash';
 
 const renderValue = (value) => (_.isObject(value) ? '[complex value]' : value);
 
-const renderPlain = (diffTree, ancestry = []) => diffTree
-  .map((diff) => {
+const renderPlain = (diffTree) => {
+  const iter = (innerDiffTree, ancestry) => innerDiffTree.flatMap((diff) => {
     const property = [...ancestry, diff.key].join('.');
     switch (diff.type) {
       case 'removed':
@@ -11,7 +11,7 @@ const renderPlain = (diffTree, ancestry = []) => diffTree
       case 'added':
         return `Property ${property} was added with value: ${renderValue(diff.valueAfter)}`;
       case 'nested':
-        return renderPlain(diff.children, [...ancestry, diff.key]);
+        return iter(diff.children, [...ancestry, diff.key]);
       case 'unchanged':
         return [];
       case 'changed':
@@ -19,8 +19,8 @@ const renderPlain = (diffTree, ancestry = []) => diffTree
       default:
         throw new Error(`Unknown type state: '${diff.type}'!`);
     }
-  })
-  .flat(Infinity)
-  .join('\n');
+  }, Infinity).join('\n');
+  return iter(diffTree, []);
+};
 
 export default renderPlain;
